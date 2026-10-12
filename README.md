@@ -11,10 +11,10 @@
   |---|---|---|---|
   | `admin_user` | string | ✅（默认 `admin`） | `AGENT2API_ADMIN_USER` |
   | `admin_password` | secret | ✅ | `AGENT2API_ADMIN_PASSWORD`（明文填，启动时转 bcrypt 哈希） |
-  | `allow_no_key` | bool | 可选（默认关） | `AGENT2API_ALLOW_NO_KEY=1/0`（关 = fail-closed） |
-  | `disable_captcha` | bool | 可选（默认关） | `AGENT2API_CAPTCHA_ENABLED=0/1`（默认开） |
+  | `allow_no_key` | string(0/1) | 可选（默认 `0`） | `AGENT2API_ALLOW_NO_KEY=0/1`（0 = fail-closed） |
+  | `captcha_enabled` | string(1/0) | 可选（默认 `1`） | `AGENT2API_CAPTCHA_ENABLED=1/0`（1 = 人机验证开） |
 
-  两个必填参数保证装完即预置管理员、登录页不再有开放注册入口；两个可选开关默认都走安全侧（fail-closed + 人机验证开启）。
+  两个必填参数保证装完即预置管理员、登录页不再有开放注册入口。两个开关用 0/1 字符串直填：上游按**字面值**判断（`ALLOW_NO_KEY` 只有 `"1"` 生效、captcha 只有 `"0"` 关闭），bool 渲染出的 `true/false` 会让两个开关都失灵，所以这里不用 bool 类型。
 - **健康检查**：`curl -fsS http://127.0.0.1:3065/health`（镜像自带 curl，与镜像自身 HEALTHCHECK 一致；`/health` 见上游 README 验证一节）。
 - **路由**：`/` → `agent2api:3065`，`public_path: [/]`——`/v1` 要给任意 API 客户端直接调用，不能要求微服账号；面板由预置管理员 + 人机验证保护，`/v1` 在没建 Key 前 fail-closed。
 - **持久化**：`/lzcapp/var/agent2api:/data`（SQLite 库、配置、日志；镜像内 `AGENT2API_PROXY_HOME=/data`）。
@@ -23,7 +23,7 @@
 
 ## 模板预检
 
-`lzc-manifest.yml` 只用了单引号整串取值与行内 `{{ if }}` 两种已知会通过 Action 预解析的写法；两个布尔分支各渲染一遍、过 YAML 解析后再提交。
+`lzc-manifest.yml` 的环境变量是 4 条 `- "KEY={{ .U.x }}"` 直填（没有条件模板）；渲染结果（含带空格 / 冒号 / 井号 / 引号的密码）过 YAML 解析后再提交。
 
 ## 商店状态
 

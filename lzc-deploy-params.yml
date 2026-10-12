@@ -12,17 +12,17 @@ params:
       default_value: ""
 
     - id: allow_no_key
-      type: bool
-      name: "Allow keyless /v1 (dangerous)"
-      description: "Off (recommended): until you create a gateway key in the panel, /v1 refuses to forward anything (fail-closed). On: requests without a key are let through — only for fully internal debugging."
-      default_value: false
+      type: string
+      name: "Allow keyless /v1 (0/1)"
+      description: "1 = serve /v1 even with no gateway key (fail-open — fully-internal debugging only). 0 = fail-closed until the first key is created in the panel. Keep 0."
+      default_value: "0"
       optional: true
 
-    - id: disable_captcha
-      type: bool
-      name: "Disable login captcha"
-      description: "Off (default): the login page keeps its human-verification captcha (AGENT2API_CAPTCHA_ENABLED=1). On: captcha disabled (=0) — not recommended for a publicly reachable instance."
-      default_value: false
+    - id: captcha_enabled
+      type: string
+      name: "Login captcha (1 on / 0 off)"
+      description: "1 = keep the login-page human-verification captcha (default). 0 = disable it. Keep 1 for any internet-reachable instance."
+      default_value: "1"
       optional: true
 
 locales:
@@ -36,12 +36,12 @@ locales:
             description: "面板管理员密码，必填。明文填入即可，容器启动时自动转 bcrypt 哈希（库里只存哈希）。不设的话，能访问到域名的人都能在登录页注册管理员。"
 
         allow_no_key:
-            name: "允许无 Key 访问 /v1（危险）"
-            description: "保持关闭（推荐）：在面板里创建「网关 Key」之前，/v1 拒绝一切转发（fail-closed）。打开后，未配 Key 的请求也放行——仅限纯内网调试。"
+            name: "允许无 Key 访问 /v1（0/1）"
+            description: "1 = 未配 Key 也放行 /v1（仅限纯内网调试）；0 = fail-closed（默认，建第一把「网关 Key」前拒绝转发）。保持 0。"
 
-        disable_captcha:
-            name: "关闭登录页人机验证"
-            description: "保持关闭（默认）：登录页保留人机验证（AGENT2API_CAPTCHA_ENABLED=1）。打开后关闭（=0）——公网可达的实例不建议关。"
+        captcha_enabled:
+            name: "登录页人机验证（1 开 / 0 关）"
+            description: "1 = 保留登录页人机验证（默认）；0 = 关闭。公网可达的实例保持 1。"
 
     zh_CN:
         admin_user:
@@ -53,12 +53,12 @@ locales:
             description: "面板管理员密码，必填。明文填入即可，容器启动时自动转 bcrypt 哈希（库里只存哈希）。不设的话，能访问到域名的人都能在登录页注册管理员。"
 
         allow_no_key:
-            name: "允许无 Key 访问 /v1（危险）"
-            description: "保持关闭（推荐）：在面板里创建「网关 Key」之前，/v1 拒绝一切转发（fail-closed）。打开后，未配 Key 的请求也放行——仅限纯内网调试。"
+            name: "允许无 Key 访问 /v1（0/1）"
+            description: "1 = 未配 Key 也放行 /v1（仅限纯内网调试）；0 = fail-closed（默认，建第一把「网关 Key」前拒绝转发）。保持 0。"
 
-        disable_captcha:
-            name: "关闭登录页人机验证"
-            description: "保持关闭（默认）：登录页保留人机验证（AGENT2API_CAPTCHA_ENABLED=1）。打开后关闭（=0）——公网可达的实例不建议关。"
+        captcha_enabled:
+            name: "登录页人机验证（1 开 / 0 关）"
+            description: "1 = 保留登录页人机验证（默认）；0 = 关闭。公网可达的实例保持 1。"
 
     en:
         admin_user:
@@ -70,9 +70,9 @@ locales:
             description: "Panel admin password — required. Plain text; converted to a bcrypt hash on first start. Without it, anyone who can reach the domain could register an admin account."
 
         allow_no_key:
-            name: "Allow keyless /v1 (dangerous)"
-            description: "Keep off (recommended): /v1 refuses to forward until a gateway key exists (fail-closed). When on, keyless requests are allowed — for fully internal debugging only."
+            name: "Allow keyless /v1 (0/1)"
+            description: "1 = allow /v1 without a gateway key (internal debugging only). 0 = fail-closed until the first key exists (default). Keep 0."
 
-        disable_captcha:
-            name: "Disable login captcha"
-            description: "Keep off (default): the login page keeps its captcha (=1). When on, the captcha is disabled (=0) — not recommended for an internet-reachable instance."
+        captcha_enabled:
+            name: "Login captcha (1 on / 0 off)"
+            description: "1 = keep the login-page captcha (default). 0 = disable it. Keep 1 for an internet-reachable instance."

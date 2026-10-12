@@ -17,13 +17,13 @@ services:
     # /lzcapp/var/agent2api 属主是 root，SQLite 要写进去——保持 root（不用 run_as）
     user: root
     environment:
-      # 向导必填：预置管理员（明文密码启动时转 bcrypt），装完即无开放注册入口
-      AGENT2API_ADMIN_USER: '{{ .U.admin_user }}'
-      AGENT2API_ADMIN_PASSWORD: '{{ .U.admin_password }}'
-      # 1 = 未配 Key 也放行 /v1（仅限纯内网）；0 = fail-closed
-      AGENT2API_ALLOW_NO_KEY: "{{ if .U.allow_no_key }}1{{ else }}0{{ end }}"
-      # 1 = 人机验证开启；0 = 关闭
-      AGENT2API_CAPTCHA_ENABLED: "{{ if .U.disable_captcha }}0{{ else }}1{{ end }}"
+      # 四条都在安装向导里直填；带引号是防密码里的空格/冒号/井号破坏 YAML
+      - "AGENT2API_ADMIN_USER={{ .U.admin_user }}"
+      - "AGENT2API_ADMIN_PASSWORD={{ .U.admin_password }}"
+      # 0 = fail-closed（默认）/ 1 = 未配 Key 也放行（仅限纯内网）
+      - "AGENT2API_ALLOW_NO_KEY={{ .U.allow_no_key }}"
+      # 1 = 登录页人机验证开启（默认）/ 0 = 关闭
+      - "AGENT2API_CAPTCHA_ENABLED={{ .U.captcha_enabled }}"
     healthcheck:
       # 与镜像自带 HEALTHCHECK 一致（镜像里有 curl；/health 见上游 README 的验证一节）
       test:
