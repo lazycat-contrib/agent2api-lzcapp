@@ -1,0 +1,64 @@
+application:
+  subdomain: agent2api
+  multi_instance: false
+  upstreams:
+    - location: /
+      backend: http://agent2api:3065
+  # 入口直接放行（不过微服账号）：/v1 是给任意 API 客户端调的，不能要求微服登录；
+  # 面板由预置的管理员账号 + 人机验证保护，/v1 在没建「网关 Key」前 fail-closed。
+  public_path:
+    - /
+services:
+  agent2api:
+    # 镜像模式：Action 只读校验后把这行改写成加速地址（Docker Hub → docker.1ms.run）
+    # upstream: aimodcc/agent2api:3.0.1
+    image: docker.1ms.run/aimodcc/agent2api:3.0.1
+    # 镜像基于 debian:bookworm-slim、默认 root（Dockerfile 无 USER）；平台建的
+    # /lzcapp/var/agent2api 属主是 root，SQLite 要写进去——保持 root（不用 run_as）
+    user: root
+    environment:
+      # 向导必填：安装时预置管理员（明文密码启动时自动转 bcrypt），装完即没有开放注册入口
+      AGENT2API_ADMIN_USER: {{ printf "%s" .U.admin_user | quote }}
+      AGENT2API_ADMIN_PASSWORD: {{ printf "%s" .U.admin_password | quote }}
+      # 危险开关：1 = 未配 Key 也放行 /v1（fail-open，仅限纯内网）；默认 0 = fail-closed
+      AGENT2API_ALLOW_NO_KEY: "{{ if .U.allow_no_key }}1{{ else }}0{{ end }}"
+      # 登录页人机验证：1 开启（默认）/ 0 关闭（向导「关闭登录页人机验证」）
+      AGENT2API_CAPTCHA_ENABLED: "{{ if .U.disable_captcha }}0{{ else }}1{{ end }}"
+    healthcheck:
+      # 与镜像自带 HEALTHCHECK 一致（镜像里有 curl；/health 见上游 README 的验证一节）
+      test:
+        - CMD-SHELL
+        - curl -fsS http://127.0.0.1:3065/health || exit 1
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    binds:
+      # SQLite 库、配置与日志都在 /data 一个卷里（镜像内 AGENT2API_PROXY_HOME=/data）
+      - /lzcapp/var/agent2api:/data
+usage: |
+  Agent2API 把桌面 AI 客户端（WorkBuddy、小浣熊、CatPaw、AutoClaw、Qoder、Cline、
+  Accio、ZCode、CodeArts、Trae 等）的登录态，统一成一个 OpenAI 兼容端点：
+  客户端只填一个 base_url，就能调用这些平台里的模型额度。
+
+  【首次使用】
+  1. 打开应用域名，用安装向导里预置的管理员账号登录；
+  2. 在「网关 Key」页创建一把 API Key —— 没建 Key 之前 /v1 拒绝一切转发（fail-closed）；
+  3. 客户端 base_url 填 https://<你的域名>/v1，api_key 填刚才创建的 Key：
+     curl https://<你的域名>/v1/models -H "Authorization: Bearer <Key>"
+
+  【添加账号】
+  「账号」页添加各平台账号，方式以弹窗为准（网页登录 / 手机验证码 / 粘贴凭证）。
+  微服上没有本机桌面客户端：需要本机回调的网页登录（AutoClaw / CatPaw / Accio /
+  CodeArts / Trae）与「导入本机登录态」不可用，请改用粘贴凭证。
+
+  【数据与升级】
+  SQLite 库、配置与日志都在 /lzcapp/var/agent2api 一个卷里，升级不丢。
+
+  【安全】
+  入口公开（API 客户端要能直接调 /v1）：面板由管理员账号 + 人机验证保护；向导里的
+  「允许无 Key 访问」会关掉 fail-closed，只建议在纯内网调试时临时打开。
+
+  【声明】
+  项目仅供学习交流：以非官方方式复用你自己账号的登录态，可能不符合上游服务条款，
+  账号风控/封禁风险自负，禁止商用或绕过计费。

@@ -1,0 +1,18 @@
+package: cloud.lazycat.app.agent2api
+version: 3.0.1
+name: Agent2API
+description: Local OpenAI-compatible AI gateway that turns desktop AI-client logins (WorkBuddy, CatPaw, AutoClaw, Qoder, Cline, Accio, ZCode, CodeArts, Trae and more) into a single base_url — multi-account/model management, outbound proxy and request reports included. MIT.
+min_os_version: 1.5.0
+homepage: https://github.com/aimod-cc/agent2api
+author: aimod-cc
+license: MIT
+locales:
+  zh:
+    name: "Agent2API"
+    description: "多提供商本地网关：把桌面 AI 客户端的登录态统一成一个 OpenAI 兼容端点，一个 base_url 调用十余家模型额度。"
+  zh_CN:
+    name: "Agent2API"
+    description: "多提供商本地网关：把桌面 AI 客户端的登录态统一成一个 OpenAI 兼容端点，一个 base_url 调用十余家模型额度。"
+  en:
+    name: "Agent2API"
+    description: "Local OpenAI-compatible gateway for AI coding clients — one base_url for a dozen providers' quota, no upstream API keys needed."

@@ -1,0 +1,78 @@
+params:
+    - id: admin_user
+      type: string
+      name: "Admin username"
+      description: "Panel admin username, preset at install time. Together with the password below, the panel never offers an open sign-up page."
+      default_value: "admin"
+
+    - id: admin_password
+      type: secret
+      name: "Admin password"
+      description: "Panel admin password — required. Fill in plain text; the container converts it to a bcrypt hash on first start. If left empty, anyone who can reach the domain could register an admin account through the login page."
+      default_value: ""
+
+    - id: allow_no_key
+      type: bool
+      name: "Allow keyless /v1 (dangerous)"
+      description: "Off (recommended): until you create a gateway key in the panel, /v1 refuses to forward anything (fail-closed). On: requests without a key are let through — only for fully internal debugging."
+      default_value: false
+      optional: true
+
+    - id: disable_captcha
+      type: bool
+      name: "Disable login captcha"
+      description: "Off (default): the login page keeps its human-verification captcha (AGENT2API_CAPTCHA_ENABLED=1). On: captcha disabled (=0) — not recommended for a publicly reachable instance."
+      default_value: false
+      optional: true
+
+locales:
+    zh:
+        admin_user:
+            name: "管理员用户名"
+            description: "面板管理员用户名，安装时预置。和下面的密码一起使用——装完不会有开放注册入口。"
+
+        admin_password:
+            name: "管理员密码（必填）"
+            description: "面板管理员密码，必填。明文填入即可，容器启动时自动转 bcrypt 哈希（库里只存哈希）。不设的话，能访问到域名的人都能在登录页注册管理员。"
+
+        allow_no_key:
+            name: "允许无 Key 访问 /v1（危险）"
+            description: "保持关闭（推荐）：在面板里创建「网关 Key」之前，/v1 拒绝一切转发（fail-closed）。打开后，未配 Key 的请求也放行——仅限纯内网调试。"
+
+        disable_captcha:
+            name: "关闭登录页人机验证"
+            description: "保持关闭（默认）：登录页保留人机验证（AGENT2API_CAPTCHA_ENABLED=1）。打开后关闭（=0）——公网可达的实例不建议关。"
+
+    zh_CN:
+        admin_user:
+            name: "管理员用户名"
+            description: "面板管理员用户名，安装时预置。和下面的密码一起使用——装完不会有开放注册入口。"
+
+        admin_password:
+            name: "管理员密码（必填）"
+            description: "面板管理员密码，必填。明文填入即可，容器启动时自动转 bcrypt 哈希（库里只存哈希）。不设的话，能访问到域名的人都能在登录页注册管理员。"
+
+        allow_no_key:
+            name: "允许无 Key 访问 /v1（危险）"
+            description: "保持关闭（推荐）：在面板里创建「网关 Key」之前，/v1 拒绝一切转发（fail-closed）。打开后，未配 Key 的请求也放行——仅限纯内网调试。"
+
+        disable_captcha:
+            name: "关闭登录页人机验证"
+            description: "保持关闭（默认）：登录页保留人机验证（AGENT2API_CAPTCHA_ENABLED=1）。打开后关闭（=0）——公网可达的实例不建议关。"
+
+    en:
+        admin_user:
+            name: "Admin username"
+            description: "Panel admin username, preset at install. Used together with the password below — no open sign-up page afterwards."
+
+        admin_password:
+            name: "Admin password (required)"
+            description: "Panel admin password — required. Plain text; converted to a bcrypt hash on first start. Without it, anyone who can reach the domain could register an admin account."
+
+        allow_no_key:
+            name: "Allow keyless /v1 (dangerous)"
+            description: "Keep off (recommended): /v1 refuses to forward until a gateway key exists (fail-closed). When on, keyless requests are allowed — for fully internal debugging only."
+
+        disable_captcha:
+            name: "Disable login captcha"
+            description: "Keep off (default): the login page keeps its captcha (=1). When on, the captcha is disabled (=0) — not recommended for an internet-reachable instance."

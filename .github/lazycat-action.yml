@@ -1,0 +1,43 @@
+version: 1
+
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/agent2api.lpk
+  target_arch: amd64
+
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: app
+
+build:
+  toolchains: []
+  run_buildscript: false
+
+images:
+  # 镜像模式（delivery.mode=mirror）：只读校验，把 manifest 里的镜像改写成加速地址
+  # （Docker Hub → docker.1ms.run），不把镜像搬到懒猫镜像源；因此也不能上官方商店。
+  - id: app
+    target: service
+    service: agent2api
+    source: aimodcc/agent2api
+    channel: stable
+    sort: semver
+    # 只跟三段式正式版（Docker Hub 上还有 latest / dev 之类别名，排除掉）
+    tag_regex: '^[0-9]+\.[0-9]+\.[0-9]+$'
+    delivery:
+      mode: mirror
+      require_digest_match: true
+
+stores:
+  official:
+    enabled: false
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: Agent2API
+    summary: "Agent2API 懒猫微服打包：多提供商本地网关，把桌面 AI 客户端登录态变成 OpenAI 兼容端点；向导预置管理员，/v1 默认 fail-closed。"
