@@ -18,12 +18,17 @@ services:
     user: root
     environment:
       # 向导必填：安装时预置管理员（明文密码启动时自动转 bcrypt），装完即没有开放注册入口
-      AGENT2API_ADMIN_USER: {{ printf "%s" .U.admin_user | quote }}
-      AGENT2API_ADMIN_PASSWORD: {{ printf "%s" .U.admin_password | quote }}
-      # 危险开关：1 = 未配 Key 也放行 /v1（fail-open，仅限纯内网）；默认 0 = fail-closed
-      AGENT2API_ALLOW_NO_KEY: "{{ if .U.allow_no_key }}1{{ else }}0{{ end }}"
-      # 登录页人机验证：1 开启（默认）/ 0 关闭（向导「关闭登录页人机验证」）
-      AGENT2API_CAPTCHA_ENABLED: "{{ if .U.disable_captcha }}0{{ else }}1{{ end }}"
+      # （取值用 degoog 同款的单引号整串写法，Action 预解析可直接过 YAML）
+      AGENT2API_ADMIN_USER: '{{ .U.admin_user }}'
+      AGENT2API_ADMIN_PASSWORD: '{{ .U.admin_password }}'
+{{if .U.allow_no_key}}
+      # 危险开关：1 = 未配 Key 也放行 /v1（fail-open，仅限纯内网）；不设时走 fail-closed
+      AGENT2API_ALLOW_NO_KEY: "1"
+{{end}}
+{{if .U.disable_captcha}}
+      # 关闭登录页人机验证；不设时走镜像默认（开启）
+      AGENT2API_CAPTCHA_ENABLED: "0"
+{{end}}
     healthcheck:
       # 与镜像自带 HEALTHCHECK 一致（镜像里有 curl；/health 见上游 README 的验证一节）
       test:
