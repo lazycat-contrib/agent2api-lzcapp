@@ -11,8 +11,8 @@ application:
 services:
   agent2api:
     # 镜像模式：Action 只读校验后把这行改写成加速地址（Docker Hub → docker.1ms.run）
-    # upstream: aimodcc/agent2api:3.0.1
-    image: docker.1ms.run/aimodcc/agent2api:3.0.1
+    # upstream: aimodcc/agent2api:3.0.3
+    image: docker.1ms.run/aimodcc/agent2api:3.0.3
     # 镜像基于 debian:bookworm-slim、默认 root（Dockerfile 无 USER）；平台建的
     # /lzcapp/var/agent2api 属主是 root，SQLite 要写进去——保持 root（不用 run_as）
     user: root
