@@ -1,5 +1,5 @@
 package: cloud.lazycat.app.agent2api
-version: 3.0.3
+version: 3.0.5
 name: Agent2API
 description: Local OpenAI-compatible AI gateway that turns desktop AI-client logins (WorkBuddy, CatPaw, AutoClaw, Qoder, Cline, Accio, ZCode, CodeArts, Trae and more) into a single base_url — multi-account/model management, outbound proxy and request reports included. MIT.
 min_os_version: 1.5.0
